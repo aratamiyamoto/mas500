@@ -128,9 +128,12 @@ class StateEntry:
     def entry(self):
         entries = OrderedDict()
         entries['State'] = self.state
+        entries['Votes'] = OrderedDict()
         for party in self.parties.items():
-            entries[party[0]] = party[1]
-        entries[self.total.keys()[0]] = self.total.values()[0]
+            entries['Votes'][party[0]] = party[1] if party[1] >= 0 else '-'
+        entries[self.total.keys()[0]] = \
+            self.total.values()[0] if self.total.values()[0] else '-'
+
         return entries
 
     def __repr__(self):
