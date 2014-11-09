@@ -34,7 +34,7 @@ class ElectionParser:
                     party = re.compile('(\*|\xa0)').sub('', ''.join(contents))
                     party = re.compile('(^\s+|\s+$)').sub('', party)
                     party = re.compile('/\s+').sub('/', party)
-                    print party
+                    party = re.compile('\s+').sub(' ', party)
                     parties.append(party)
             else:
                 tds = tr.findAll('td')
@@ -82,13 +82,16 @@ class ElectionParser:
 
     def save_to_json(self, filename):
         json_file = open(filename, 'w')
+        entries = []
 
         for state in self.election_result.state_list():
             state_entry = self.election_result.state_entry(state)
-            print >> json_file, json.dumps(state_entry.entries())
+            entries.append(state_entry.entry())
 
         total_state = self.election_result.total_state
-        print >> json_file, json.dumps(total_state.entries())
+        entries.append(total_state.entry())
+
+        print >> json_file, json.dumps(entries, indent=4)
 
         json_file.close()
 
@@ -122,8 +125,11 @@ class StateEntry:
         vote_for_party = self.parties[party]
         return float(vote_for_party) / total_votes
 
-    def entries(self):
-        entries = self.parties
+    def entry(self):
+        entries = OrderedDict()
+        entries['State'] = self.state
+        for party in self.parties.items():
+            entries[party[0]] = party[1]
         entries[self.total.keys()[0]] = self.total.values()[0]
         return entries
 
