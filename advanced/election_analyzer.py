@@ -1,9 +1,12 @@
+# imports/exports/anayzes vote data
+
 import sys
 import re
 import json
 from collections import OrderedDict
 from bs4 import BeautifulSoup
 
+# imports html, export csv/json
 class ElectionParser:
     def __init__(self):
         self.election_result = ElectionResult()
@@ -95,6 +98,7 @@ class ElectionParser:
 
         json_file.close()
 
+# entry for each state
 class StateEntry:
     def __init__(self, state):
         self.state = state
@@ -139,6 +143,7 @@ class StateEntry:
     def __repr__(self):
         return 'state=' + self.state + ' ' + self.parties.__repr__()
 
+# holds the date for all states and analyzes it
 class ElectionResult:
     def __init__(self):
         self.states = []

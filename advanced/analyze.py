@@ -1,3 +1,5 @@
+# excersises functions defined in election_analyzer
+
 from election_analyzer import *
 
 def main():
