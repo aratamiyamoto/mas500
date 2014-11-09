@@ -30,7 +30,7 @@ def main():
         print 'winning_party(' + state + ') = ', state_entry.winning_party()
 
     parser.save_to_csv(csv_filename)
-    parser.save_to_csv(json_filename)
+    parser.save_to_json(json_filename)
 
 if __name__ == '__main__':
     main()

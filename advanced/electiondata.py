@@ -1,5 +1,6 @@
 import sys
 import re
+import json
 from collections import OrderedDict
 from bs4 import BeautifulSoup
 
@@ -80,7 +81,16 @@ class ElectionParser:
         
 
     def save_to_json(self, filename):
-        a = 1
+        json_file = open(filename, 'w')
+
+        for state in self.election_result.state_list():
+            state_entry = self.election_result.state_entry(state)
+            print >> json_file, json.dumps(state_entry.entries())
+
+        total_state = self.election_result.total_state
+        print >> json_file, json.dumps(total_state.entries())
+
+        json_file.close()
 
 class StateEntry:
     def __init__(self, state):
@@ -111,6 +121,11 @@ class StateEntry:
         total_votes = self.total_votes()
         vote_for_party = self.parties[party]
         return float(vote_for_party) / total_votes
+
+    def entries(self):
+        entries = self.parties
+        entries[self.total.keys()[0]] = self.total.values()[0]
+        return entries
 
     def __repr__(self):
         return 'state=' + self.state + ' ' + self.parties.__repr__()
