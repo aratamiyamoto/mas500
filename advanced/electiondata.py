@@ -27,22 +27,32 @@ class ElectionParser:
 
             if state == 'State':
                 ths = tr.findAll('th')
-                for th_party in ths[1:-1]:
-                    party = re.compile('[^\w\s]').sub('', th_party.contents[0])
-                    party = re.compile('\w+').search(party).group(0)
+                for th_party in ths[1:]:
+                    contents = filter(lambda c: isinstance(c, basestring),
+                            th_party.contents)
+                    party = re.compile('(\*|\xa0)').sub('', ''.join(contents))
+                    party = re.compile('(^\s+|\s+$)').sub('', party)
+                    party = re.compile('/\s+').sub('/', party)
+                    print party
                     parties.append(party)
-            elif re.compile('^[A-Z]{2}$').match(state):
+            else:
                 tds = tr.findAll('td')
                 td_vals = []
-                for td in tds[0:-1]:
+                for td in tds:
                     val = re.compile('\*').sub('', td.string)
                     if val == '-':
                         val = -1
                     td_vals.append(int(val))
                 for vote in zip(parties, td_vals):
-                    state_entry.add_party(vote[0], vote[1])
+                    if vote[0] == 'Total Votes':
+                        state_entry.set_total(vote[0], vote[1])
+                    else:
+                        state_entry.add_party(vote[0], vote[1])
             
-                self.election_result.add_state(state_entry)
+                if state == 'Totals':
+                    self.election_result.set_total_state(state_entry)
+                else:
+                    self.election_result.add_state(state_entry)
 
     def get_election_result(self):
         return self.election_result
@@ -80,6 +90,10 @@ class StateEntry:
     def add_party(self, party, votes):
         self.parties[party] = votes
 
+    def set_total(self, total_tag, votes):
+        self.total = OrderedDict()
+        self.total[total_tag] = votes
+
     def party_count(self):
         return len(self.parties)
 
@@ -87,7 +101,7 @@ class StateEntry:
         return self.parties.keys()
 
     def total_votes(self):
-        return sum(self.parties.values())
+        return self.total.values()[0]
 
     def winning_party(self):
         return reduce(lambda p, q:
@@ -108,6 +122,9 @@ class ElectionResult:
     def add_state(self, state_entry):
         self.states.append(state_entry)
 
+    def set_total_state(self, state_entry):
+        self.total_state = state_entry
+
     def state_count(self):
         return len(self.states)
 
@@ -124,8 +141,7 @@ class ElectionResult:
         return self.states[0].party_list()
 
     def total_vote_for_party(self, party):
-        state_votes = [state.parties[party] for state in self.states]
-        return sum(state_votes)
+        return self.total_state.parties[party]
 
     def winning_party(self):
         parties = self.party_list()
