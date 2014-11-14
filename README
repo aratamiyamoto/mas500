@@ -1,1 +1,5 @@
-run 'python analyze.py'
+# To run the analyzer, execute
+    $ python analyze.py
+
+# To run unit tests, execute
+    $ python test/tester.py
