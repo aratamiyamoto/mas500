@@ -26,7 +26,7 @@ class ElectionParser:
         for tr in trs:
             th = tr.find('th')
 
-            state = re.compile('\W').sub('', th.contents[0])
+            state = re.compile('(^\s+|\s+$)').sub('', th.contents[0])
             state_entry = StateEntry(state)
 
             if state == 'State':
