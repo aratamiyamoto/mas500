@@ -1,0 +1,38 @@
+[
+    {
+        "State": "State 1", 
+        "Votes": {
+            "Party A": 80, 
+            "Party B": 50, 
+            "Party C": 20
+        }, 
+        "Total Votes": 150
+    }, 
+    {
+        "State": "State 2", 
+        "Votes": {
+            "Party A": 30, 
+            "Party B": 40, 
+            "Party C": 10
+        }, 
+        "Total Votes": 80
+    }, 
+    {
+        "State": "State 3", 
+        "Votes": {
+            "Party A": 60, 
+            "Party B": 20, 
+            "Party C": 30
+        }, 
+        "Total Votes": 110
+    }, 
+    {
+        "State": "Totals", 
+        "Votes": {
+            "Party A": 170, 
+            "Party B": 110, 
+            "Party C": 60
+        }, 
+        "Total Votes": 340
+    }
+]
