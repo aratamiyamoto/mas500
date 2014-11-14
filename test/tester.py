@@ -9,11 +9,11 @@ from election_analyzer import *
 import unittest
 import filecmp
 
-sample_html = 'sample-vote.html'
-sample_csv = 'sample-vote.csv'
-sample_json = 'sample-vote.json'
-reference_csv = 'reference.csv'
-reference_json = 'reference.json'
+sample_html = script_path + '/' + 'sample-vote.html'
+sample_csv = script_path + '/' + 'sample-vote.csv'
+sample_json = script_path + '/' + 'sample-vote.json'
+reference_csv = script_path + '/' + 'reference.csv'
+reference_json = script_path + '/' + 'reference.json'
 
 test_state = "State1"
 test_parties = [ "Party1", "Party2", "Party3" ]
