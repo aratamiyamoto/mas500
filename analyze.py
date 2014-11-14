@@ -8,37 +8,37 @@ def main():
     json_filename = 'popular-vote.json'
 
     parser = ElectionParser()
-    parser.load_html(html_filename)
-    result = parser.get_election_result()
+    parser.loadHtml(html_filename)
+    result = parser.getElectionResult()
 
-    print 'state_count =', result.state_count()
-    print 'state_list =', result.state_list()
-    print 'party_list =', result.party_list()
+    print 'stateCount =', result.stateCount()
+    print 'stateList =', result.stateList()
+    print 'partyList =', result.partyList()
 
-    for party in result.party_list():
-        most_popular_state = result.most_popular_state(party)
-        least_popular_state = result.least_popular_state(party)
+    for party in result.partyList():
+        most_popular_state = result.mostPopularState(party)
+        least_popular_state = result.leastPopularState(party)
         vote_rate_in_most_popular_state = \
-            result.state_entry(most_popular_state).vote_rate(party)
+            result.stateEntry(most_popular_state).voteRate(party)
         vote_rate_in_least_popular_state = \
-            result.state_entry(least_popular_state).vote_rate(party)
+            result.stateEntry(least_popular_state).voteRate(party)
 
-        print 'total_vote_for_party(' + party + ') =', \
-            result.total_vote_for_party(party)
-        print 'num_winning_states(' + party + ') =', \
-            result.num_winning_states(party)
-        print 'most_popular_state(%s) = %s(%.3f%%)' % \
+        print 'totalVoteForparty(' + party + ') =', \
+            result.totalVoteForParty(party)
+        print 'numWinningStates(' + party + ') =', \
+            result.numWinningStates(party)
+        print 'mostPopularState(%s) = %s(%.3f%%)' % \
             (party, most_popular_state, vote_rate_in_most_popular_state * 100)
-        print 'least_popular_state(%s) = %s(%.3f%%)' % \
+        print 'leastPopularState(%s) = %s(%.3f%%)' % \
             (party, least_popular_state, vote_rate_in_least_popular_state * 100)
 
-    print 'winning_party =', result.winning_party()
-    for state in result.state_list():
-        state_entry = result.state_entry(state)
-        print 'winning_party(' + state + ') =', state_entry.winning_party()
+    print 'winningParty =', result.winningParty()
+    for state in result.stateList():
+        state_entry = result.stateEntry(state)
+        print 'winningParty(' + state + ') =', state_entry.winningParty()
 
-    parser.save_to_csv(csv_filename)
-    parser.save_to_json(json_filename)
+    parser.saveToCsv(csv_filename)
+    parser.saveToJson(json_filename)
 
 if __name__ == '__main__':
     main()

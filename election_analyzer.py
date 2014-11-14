@@ -11,7 +11,7 @@ class ElectionParser:
     def __init__(self):
         self.election_result = ElectionResult()
 
-    def load_html(self, filename):
+    def loadHtml(self, filename):
         html_file = open(filename, 'r')
         lines = html_file.readlines()
         soup = BeautifulSoup("".join(lines))
@@ -27,6 +27,7 @@ class ElectionParser:
             th = tr.find('th')
 
             state = re.compile('(^\s+|\s+$)').sub('', th.contents[0])
+            state = re.compile('\*').sub('', state)
             state_entry = StateEntry(state)
 
             if state == 'State':
@@ -49,33 +50,33 @@ class ElectionParser:
                     td_vals.append(int(val))
                 for vote in zip(parties, td_vals):
                     if vote[0] == 'Total Votes':
-                        state_entry.set_total(vote[0], vote[1])
+                        state_entry.setTotal(vote[0], vote[1])
                     else:
-                        state_entry.add_party(vote[0], vote[1])
+                        state_entry.addParty(vote[0], vote[1])
             
                 if state == 'Totals':
-                    self.election_result.set_total_state(state_entry)
+                    self.election_result.setTotalState(state_entry)
                 else:
-                    self.election_result.add_state(state_entry)
+                    self.election_result.addState(state_entry)
 
-    def get_election_result(self):
+    def getElectionResult(self):
         return self.election_result
 
-    def save_to_csv(self, filename):
-        parties = self.election_result.party_list()
+    def saveToCsv(self, filename):
+        parties = self.election_result.partyList()
 
         csv_file = open(filename, 'w')
         print >> csv_file, ','.join(['State'] + parties + ['Total Votes'])
 
-        for state in self.election_result.state_list():
-            state_entry = self.election_result.state_entry(state)
+        for state in self.election_result.stateList():
+            state_entry = self.election_result.stateEntry(state)
             votes = state_entry.parties.values()
             total_votes = sum(filter(lambda x: x >= 0, votes))
             line = [state] + [str(vote) if vote >= 0 else '-' for vote in votes] + [str(total_votes)]
             
             print >> csv_file, ','.join(line)
 
-        totals = [self.election_result.total_vote_for_party(party) for party in parties]
+        totals = [self.election_result.totalVoteForParty(party) for party in parties]
         total_total_votes = sum(totals)
         line = ['Totals'] + [str(total) for total in totals] + [str(total_total_votes)]
         print >> csv_file, ','.join(line)
@@ -83,12 +84,12 @@ class ElectionParser:
         csv_file.close()
         
 
-    def save_to_json(self, filename):
+    def saveToJson(self, filename):
         json_file = open(filename, 'w')
         entries = []
 
-        for state in self.election_result.state_list():
-            state_entry = self.election_result.state_entry(state)
+        for state in self.election_result.stateList():
+            state_entry = self.election_result.stateEntry(state)
             entries.append(state_entry.entry())
 
         total_state = self.election_result.total_state
@@ -104,28 +105,28 @@ class StateEntry:
         self.state = state
         self.parties = OrderedDict()
 
-    def add_party(self, party, votes):
+    def addParty(self, party, votes):
         self.parties[party] = votes
 
-    def set_total(self, total_tag, votes):
+    def setTotal(self, total_tag, votes):
         self.total = OrderedDict()
         self.total[total_tag] = votes
 
-    def party_count(self):
+    def partyCount(self):
         return len(self.parties)
 
-    def party_list(self):
+    def partyList(self):
         return self.parties.keys()
 
-    def total_votes(self):
+    def totalVotes(self):
         return self.total.values()[0]
 
-    def winning_party(self):
+    def winningParty(self):
         return reduce(lambda p, q:
                 p if self.parties[p] > self.parties[q] else q, self.parties)
 
-    def vote_rate(self, party):
-        total_votes = self.total_votes()
+    def voteRate(self, party):
+        total_votes = self.totalVotes()
         vote_for_party = self.parties[party]
         return float(vote_for_party) / total_votes
 
@@ -148,53 +149,53 @@ class ElectionResult:
     def __init__(self):
         self.states = []
 
-    def add_state(self, state_entry):
+    def addState(self, state_entry):
         self.states.append(state_entry)
 
-    def set_total_state(self, state_entry):
+    def setTotalState(self, state_entry):
         self.total_state = state_entry
 
-    def state_count(self):
+    def stateCount(self):
         return len(self.states)
 
-    def state_list(self):
+    def stateList(self):
         return map(lambda s: s.state, self.states)
 
-    def state_entry(self, state):
+    def stateEntry(self, state):
         return filter(lambda s: s.state == state, self.states)[0]
 
-    def party_count(self):
-        return self.states[0].party_count()
+    def partyCount(self):
+        return self.states[0].partyCount()
 
-    def party_list(self):
-        return self.states[0].party_list()
+    def partyList(self):
+        return self.states[0].partyList()
 
-    def total_vote_for_party(self, party):
+    def totalVoteForParty(self, party):
         return self.total_state.parties[party]
 
-    def winning_party(self):
-        parties = self.party_list()
-        votes = [self.total_vote_for_party(party) for party in parties]
+    def winningParty(self):
+        parties = self.partyList()
+        votes = [self.totalVoteForParty(party) for party in parties]
         winner = reduce(lambda p, q: p if p[1] > q[1] else q,
                 zip(parties, votes))
         return winner[0]
 
-    def num_winning_states(self, party):
-        states = self.state_list()
-        winning_states = [state.winning_party() for state in self.states]
+    def numWinningStates(self, party):
+        states = self.stateList()
+        winning_states = [state.winningParty() for state in self.states]
         return winning_states.count(party)
 
-    def most_popular_state(self, party):
-        states = self.state_list()
-        vote_rates = [state.vote_rate(party) for state in self.states]
+    def mostPopularState(self, party):
+        states = self.stateList()
+        vote_rates = [state.voteRate(party) for state in self.states]
         state_vote_pairs = filter(lambda p: p[1] >= 0, zip(states, vote_rates))
         state_with_highest_rate = reduce(lambda s, t: s if s[1] > t[1] else t,
                 state_vote_pairs, ('', -sys.maxint - 1))
         return state_with_highest_rate[0]
 
-    def least_popular_state(self, party):
-        states = self.state_list()
-        vote_rates = [state.vote_rate(party) for state in self.states]
+    def leastPopularState(self, party):
+        states = self.stateList()
+        vote_rates = [state.voteRate(party) for state in self.states]
         state_vote_pairs = filter(lambda p: p[1] >= 0, zip(states, vote_rates))
         state_with_highest_rate = reduce(lambda s, t: s if s[1] < t[1] else t,
                 state_vote_pairs, ('', sys.maxint))
