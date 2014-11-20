@@ -11,6 +11,8 @@ var SplashView = Backbone.View.extend({
     initialize: function(){
         this.loadCountryData();
         this.render();
+
+        splashRouter.navigate("", {trigger:false}); 
     },
      
     // render the whole app
@@ -36,8 +38,23 @@ var SplashView = Backbone.View.extend({
             $('#gv-loading').show();
             this.updateGlobalVoicesContent(rssUrl);
             this.updateBackgroundMap(currentCountry);
+
+            splashRouter.navigate("country/" + currentCountry, {trigger:false});
         }
     },
+
+    lookupCountry2: function(){
+        var currentCountry = $('#gv-country').val();
+        if (_.has(this.countryToPath,currentCountry) ){
+            rssUrl = "http://globalvoicesonline.org"+this.countryToPath[currentCountry]+"feed";
+            $('#gv-country').attr('disabled', 'disabled');
+            $('.gv-story').hide();
+            $('#gv-loading').show();
+            this.updateGlobalVoicesContent(rssUrl);
+            this.updateBackgroundMap(currentCountry);
+        }
+    },
+
 
     // fetch the latest content from the country's RSS feed
     updateGlobalVoicesContent: function(rssUrl){
@@ -93,5 +110,7 @@ splashView = new SplashView;
 
 // kick off the app!
 $("#app").html(splashView.el);
+
+Backbone.history.start();
 
 })(jQuery);

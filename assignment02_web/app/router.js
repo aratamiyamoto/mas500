@@ -15,6 +15,7 @@ var SplashRouter = Backbone.Router.extend({
      
     home: function() {
         console.log('home()');
+        $('#gv-country').val();
     },
 
     country: function(country) {
@@ -28,4 +29,3 @@ splashRouter = new SplashRouter;
 
 })(jQuery);
 
-Backbone.history.start({pushState: true});
