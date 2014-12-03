@@ -2,8 +2,16 @@ var splashView; // HACK: needs to be global so template can access country data
 
 (function($){
 
-var SplashView = Backbone.View.extend({
+var SearchCountModel = Backbone.Model.extend({
+    default: {
+        country: 'default countly',
+        count: 0
+    },
 
+    url: 'search_count'
+});
+
+var SplashView = Backbone.View.extend({
     events: {
       "change #gv-country":    "lookupCountry",
     },
@@ -40,6 +48,19 @@ var SplashView = Backbone.View.extend({
             this.updateBackgroundMap(currentCountry);
 
             splashRouter.navigate("country/" + currentCountry, {trigger:false});
+
+            var searchCount =
+                new SearchCountModel({country: currentCountry}).fetch({
+                wait: true,
+                success: function() {
+                    searchCount.set('count', searchCount.get('count') + 1);
+                    searchCount.save();
+                },
+                error: function() {
+                    searchCount = new SearchCountModel({country: currentCountry, count: 1});
+                    searchCount.save();
+                }
+            });
         }
     },
 
