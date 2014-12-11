@@ -1,8 +1,9 @@
 Cordova Example - Get To Know : Global Voices
 =============================================
 
-Small example Cordova applicaton for the MAS.500 course.  This is built with Cordova,
-backbone.js and jquery-mobile.
+Modified the original Cordova applicaton.
+    (i)  check if the device is connected to the internet at the start time
+    (ii) refined the layout of each article
 
 Installation
 ------------
