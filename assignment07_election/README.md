@@ -1,8 +1,7 @@
-election-example
+election-example with pie chart
 ================
 
-A silly example on Processing that reads in 2012 US election results and draws them as text.
-Open the Election.pde to run the example.  Modify the code to do something more interesting.
+Added codes to draw a pie chart to the election-example.
 
 Instructions
 ------------
@@ -13,8 +12,6 @@ Instructions
   * If you want to use your own git repository, you can download this using the "zip" button
 3. Open the Election.pde file on your computer with Processing
 4. Press the play button to run it
-5. Modify the `draw()` function to do something more interesting!
-6. Commit the changes to your git repository
 
 Data
 ----

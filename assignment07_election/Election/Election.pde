@@ -1,5 +1,6 @@
 /**
  * Example that loads up election data and draws something with it.
+ * Added codes to draw a pie chart
  */
 
 // window size (it's a square)
@@ -42,22 +43,37 @@ void draw() {
     smooth();
     background(0);
     fill(255);
+
     // draw the state name
     textFont(font,36);
     textAlign(CENTER);
     String currentPostalCode = statePostalCodes[ currentStateIndex ];
     StateData state = data.getState(currentPostalCode);
     text(state.name,WINDOW_SIZE/2,WINDOW_SIZE/4);
+
     // draw the obama vote count and title
     fill(50,50,250);  // blue
     text("Obama",WINDOW_SIZE/4,WINDOW_SIZE/2);
     text(Math.round(state.pctForObama)+"%",WINDOW_SIZE/4,3*WINDOW_SIZE/4);
+
     // draw the romney vote count and title
     fill(201,50,50);  // red
     text("Romney",3*WINDOW_SIZE/4,WINDOW_SIZE/2);
     text(Math.round(state.pctForRomney)+"%",3*WINDOW_SIZE/4,3*WINDOW_SIZE/4);
+
+    // draw a pie graph
+    float arcAngleObama = (float)PI*2 * (float)state.pctForObama / 100;
+    int arcRadiusObama = state.pctForObama > state.pctForRomney ? WINDOW_SIZE/4+12 : WINDOW_SIZE/4;
+    float arcAngleRomney = (float)PI*2 * (float)state.pctForRomney / 100;
+    int arcRadiusRomney = state.pctForObama < state.pctForRomney ? WINDOW_SIZE/4+12 : WINDOW_SIZE/4;
+    fill(50,50,250);  // blue
+    arc(WINDOW_SIZE/2, WINDOW_SIZE*3/4, arcRadiusObama, arcRadiusObama, -PI/2, arcAngleObama -PI/2, PIE);
+    fill(201,50,50);  // red
+    arc(WINDOW_SIZE/2, WINDOW_SIZE*3/4, arcRadiusRomney, arcRadiusRomney, arcAngleObama -PI/2, arcAngleObama + arcAngleRomney -PI/2, PIE);
+
     // update which state we're showing
     currentStateIndex = (currentStateIndex+1) % statePostalCodes.length;
+
     // update the last time we drew a state
     lastStateMillis = millis();
   }
